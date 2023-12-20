@@ -1,37 +1,35 @@
-import { useEffect, useState } from 'react'
-import { Header, Footer } from './components/index';
-import { useDispatch, useSelector } from 'react-redux';
-import authService from './appwrite/auth_service';
-import { login, logout } from "./store/authSlice"
-import { Outlet } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { Header, Footer } from "./components/index";
+import { useDispatch, useSelector } from "react-redux";
+import authService from "./appwrite/auth_service";
+import { login, logout } from "./store/authSlice";
+import { Outlet } from "react-router-dom";
 
 function App() {
-
   const [loader, setLoader] = useState(true);
-  const dispatch = useDispatch;
+  const dispatch = useDispatch();
 
   useEffect(()=>{
-
-    authService.getCurrentUser().then((userData)=>{
-      if(userData){
-        dispatch(login({userData}));
+      if(authService.getCurrentUser() == null){
+        console.log("user not found");
+        dispatch(logout());
       }else{
-        dispatch(logout())
+        authService.getCurrentUser().then((userData) => dispatch(login(userData)))
+        .catch((err) => console.log("err: ", err))        
       }
-    }).finally(()=>{
-      setLoader(false)
-    })
-
+      setLoader(false);
   },[]);
-
 
   return !loader ? (
     <div>
       <Header />
-      <div className='h-[300px]'></div>
       <Footer />
     </div>
-  ) : (<><h1>Loading....</h1></>)
+  ) : (
+    <>
+      <h1>Loading....</h1>
+    </>
+  );
 }
 
-export default App
+export default App;
