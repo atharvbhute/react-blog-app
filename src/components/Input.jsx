@@ -16,7 +16,6 @@ const Input = React.forwardRef(function Input({
             />
         </div>
     )
-
 })
 
 export default Input
